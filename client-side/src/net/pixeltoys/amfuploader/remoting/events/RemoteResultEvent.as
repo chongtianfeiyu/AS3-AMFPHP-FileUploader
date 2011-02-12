@@ -1,4 +1,4 @@
-package remoting.events
+package net.pixeltoys.amfuploader.remoting.events
 {
 	import flash.events.Event;
 	public class RemoteResultEvent extends Event {

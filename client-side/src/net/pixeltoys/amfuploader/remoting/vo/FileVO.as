@@ -1,4 +1,4 @@
-package remoting.vo
+package net.pixeltoys.amfuploader.remoting.vo 
 {
 	import flash.utils.ByteArray;
 	

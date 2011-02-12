@@ -1,8 +1,8 @@
-package remoting.services
+package net.pixeltoys.amfuploader.remoting.services
 {
 	import flash.events.EventDispatcher;
 	import mx.core.FlexGlobals;
-	import remoting.events.RemoteExceptionEvent;
+	import net.pixeltoys.amfuploader.remoting.events.RemoteExceptionEvent;
 	
 	import mx.core.Application;
 	import mx.messaging.ChannelSet;

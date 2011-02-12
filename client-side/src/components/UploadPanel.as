@@ -13,10 +13,10 @@ package components
 	import mx.core.Container;
 	import mx.core.UIComponent;
 	import mx.events.FlexEvent;
-	import remoting.events.RemoteExceptionEvent;
-	import remoting.events.RemoteResultEvent;
-	import remoting.services.RemoteFileService;
-	import remoting.vo.FileVO;
+	import net.pixeltoys.amfuploader.remoting.events.RemoteExceptionEvent;
+	import net.pixeltoys.amfuploader.remoting.events.RemoteResultEvent;
+	import net.pixeltoys.amfuploader.remoting.services.RemoteFileService;
+	import net.pixeltoys.amfuploader.remoting.vo.FileVO;
 	import utils.PanelDragger;
 	
 	/**
@@ -42,7 +42,7 @@ package components
 		public function UploadPanel() 
 		{
 			_form = new UploadForm();
-			addChild( _form );			
+			addChild( _form );
 		}
 		
 		override protected function initializationComplete():void 
