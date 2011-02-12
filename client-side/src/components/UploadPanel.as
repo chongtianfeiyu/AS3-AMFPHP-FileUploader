@@ -1,17 +1,10 @@
 package components  
 {
 	import flash.display.Loader;
-	import flash.display.LoaderInfo;
-	import flash.display.Sprite;
 	import flash.events.Event;
-	import flash.events.TimerEvent;
 	import flash.net.FileReference;
 	import flash.utils.ByteArray;
-	import flash.utils.Timer;
-	import mx.containers.Canvas;
 	import mx.containers.Panel;
-	import mx.core.Container;
-	import mx.core.UIComponent;
 	import mx.events.FlexEvent;
 	import net.pixeltoys.amfuploader.remoting.events.RemoteExceptionEvent;
 	import net.pixeltoys.amfuploader.remoting.events.RemoteResultEvent;
@@ -27,17 +20,21 @@ package components
 	
 	public class UploadPanel extends Panel 
 	{
+		/**
+		 * Specifies the name of the file to be saved on the server.
+		 * If left empty the original file name in the local drive is used instead.
+		 * In all cases, after the upload is successfull this variable takes the value of the saved filename.
+		 */
+		public var selectedFilename:String = "";
+		public var amfChannelId:String = "my-amfphp";
+		public var amfGateway:String = "http://localhost/amfphp/gateway.php";
 		
-		private var amfChannelId:String = "my-amfphp";
-		private var amfGateway:String = "http://localhost/amfphp/gateway.php";
 		private var service:RemoteFileService;
 		
 		private var _fileReference:FileReference;
 		private var _form:UploadForm;
 		private var _fileVO:FileVO;
 		private var _previewLoader:Loader;
-		
-		public var selectedFilename:String = "";
 		
 		public function UploadPanel() 
 		{
