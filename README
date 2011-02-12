@@ -1,3 +1,7 @@
 
-Based on 
+Based on:
 http://gertonscorner.wordpress.com/2009/03/15/fileupload-using-amfphp-remoteobject-and-flash-10/
+
+'''Disclaimer'''
+All classes in the net.pixeltoys.amfuploader.remoting package are by Gerton ten Ham (http://gertonscorner.wordpress.com/about/)
+I included those in my own package for easy of use, and because they didn't have a fully qualified package name in Gerton's examples.
