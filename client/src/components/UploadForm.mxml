@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<mx:Form xmlns:mx="http://www.adobe.com/2006/mxml"
+width="100%" height="100%">
+	<mx:VBox horizontalAlign="center" width="100%">
+
+	    <mx:Button id="btnBrowse" label="Browse a file"/>
+		<!--mx:Text id="txtFileSelected" text="..." /-->
+		<mx:UIComponent id="previewContainer" width="160" height="90" toolTip="preview"></mx:UIComponent>		
+		<mx:HBox horizontalAlign="center" width="100%">
+			<mx:Button id="btnUpload" label="Upload" enabled="false"/>
+			<mx:Button id="btnCancel" label="Cancel" enabled="true"/>
+		</mx:HBox>
+		<mx:Label id="txtMessage" text="..." />
+	</mx:VBox>
+</mx:Form>

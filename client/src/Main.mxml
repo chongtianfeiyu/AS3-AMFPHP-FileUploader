@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<mx:Application 
+xmlns:mx="http://www.adobe.com/2006/mxml"
+xmlns:my="components.*"
+ paddingBottom="0" paddingTop="0" paddingLeft="0" paddingRight="0" 
+ layout="vertical">
+	<my:UploadPanel title="File Upload" width="240" height="240"></my:UploadPanel>
+</mx:Application>
