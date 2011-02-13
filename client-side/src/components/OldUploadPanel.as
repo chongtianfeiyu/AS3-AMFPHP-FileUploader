@@ -1,13 +1,15 @@
 package components  
 {
 	import flash.display.Loader;
-	import flash.events.ErrorEvent;
 	import flash.events.Event;
 	import flash.net.FileReference;
+	import flash.utils.ByteArray;
 	import mx.containers.Panel;
 	import mx.events.FlexEvent;
-	import net.pixeltoys.amfuploader.FileUploader;
 	import net.pixeltoys.amfuploader.remoting.events.RemoteExceptionEvent;
+	import net.pixeltoys.amfuploader.remoting.events.RemoteResultEvent;
+	import net.pixeltoys.amfuploader.remoting.services.RemoteFileService;
+	import net.pixeltoys.amfuploader.remoting.vo.FileVO;
 	import utils.PanelDragger;
 	
 	/**
@@ -16,7 +18,7 @@ package components
 	 */
 	
 	
-	public class UploadPanel extends Panel 
+	public class OldUploadPanel extends Panel 
 	{
 		/**
 		 * Specifies the name of the file to be saved on the server.
@@ -24,17 +26,18 @@ package components
 		 * In all cases, after the upload is successfull this variable takes the value of the saved filename.
 		 */
 		public var selectedFilename:String = "";
-		
-		
 		public var amfChannelId:String = "my-amfphp";
-		public var amfGateway:String = "http://localhost/amfphp/gateway.php";		
+		public var amfGateway:String = "http://localhost/amfphp/gateway.php";
 		
-		private var _form:UploadForm;
-		private var _fileUploader:FileUploader;
+		private var service:RemoteFileService;
 		
+		private var _fileReference:FileReference;
+		private var _fileVO:FileVO;
 		private var _previewLoader:Loader;
 		
-		public function UploadPanel() 
+		private var _form:UploadForm;
+		
+		public function OldUploadPanel() 
 		{
 			_form = new UploadForm();
 			addChild( _form );
@@ -55,41 +58,64 @@ package components
 			_form.btnUpload.addEventListener( FlexEvent.BUTTON_DOWN, handleUploadFileRequest );			
 			_form.btnCancel.addEventListener( FlexEvent.BUTTON_DOWN, handleCancel );
 			
-			_fileUploader = new FileUploader( amfChannelId, amfGateway, false );
-			_fileUploader.addEventListener( Event.SELECT, handleFileSelect );
-			_fileUploader.addEventListener( Event.COMPLETE, handleFileUploaded );
-			_fileUploader.addEventListener( ErrorEvent.ERROR, handleError );
-		}				
+			// Create a new service instance
+			service = new RemoteFileService( amfChannelId, amfGateway );			
+			service.addEventListener(RemoteExceptionEvent.REMOTE_EXCEPTION, handleRemoteExceptionEvent);
+			service.addEventListener(RemoteResultEvent.UPLOAD_STATUS, handleRemoteResultEvent);
+		}
+		
 		
 		private function reset():void {
 			// Reset UI and filereference
 			//_form.txtFileSelected.text = "...";
 			_form.btnUpload.enabled = false;
-			_fileUploader.reset();
+			_fileReference = new FileReference();
 		}
 		
 		
 		// Called to add a file for upload 
 		private function browseFile():void { 
-			_fileUploader.browse();
+		   _fileReference = new  FileReference(); 
+		   _fileReference.browse(); 
+		   _fileReference.addEventListener(Event.SELECT, onFileSelect);
 		} 
 		// Called when a file is selected 
-		private function handleFileSelect(e:Event):void 		
+		private function onFileSelect(event:Event):void
 		{ 
-			_form.txtMessage.text = "Please click the Upload button.";
-			generatePreview();
+			//_form.txtFileSelected.text = _fileReference.name;
 			_form.btnUpload.enabled = true;
-		} 		
+			// Load the filereference data
+			_fileReference.addEventListener( Event.COMPLETE, handleFileLoadComplete );
+			_fileReference.load();
+			_form.txtMessage.text = "Please click the Upload button.";
+		} 
+		
+		private function handleFileLoadComplete(e:Event):void 
+		{
+			createFileVO();
+			generatePreview();
+		}
+		
+		private function createFileVO():void 
+		{
+		   // Create a new FileVO instance
+		   _fileVO = new FileVO();		   
+		   var data:ByteArray = new ByteArray(); 
+		   //Read the bytes into bytearray var
+		   _fileReference.data.readBytes(data, 0, _fileReference.data.length); 
+		   _fileVO.filename = (selectedFilename=="")? _fileReference.name : selectedFilename;
+		   _fileVO.filedata = data;
+		}
 		
 		private function generatePreview():void 
 		{
-			var extension:String = getExtension(_fileUploader.fileVO.filename);
+			var extension:String = getExtension(_fileVO.filename);
 			var filetypes:Array = ["JPG", "jpg", "JPEG", "jpeg", "PNG", "png"];
 			if ( filetypes.indexOf(extension) >= 0)
 			{
 				_previewLoader = new Loader();
 				_previewLoader.contentLoaderInfo.addEventListener( Event.INIT, handlePreviewLoaded );
-				_previewLoader.loadBytes( _fileUploader.fileVO.filedata );
+				_previewLoader.loadBytes( _fileVO.filedata );
 				if (_form.previewContainer.numChildren > 0) _form.previewContainer.removeChild( _form.previewContainer.getChildAt(0) );
 				_form.previewContainer.addChild( _previewLoader );
 			}
@@ -105,7 +131,7 @@ package components
 		// Called when upload file is clicked
 		private function uploadFile():void
 		{		   
-			_fileUploader.upload();
+		   service.upload(_fileVO);
 		   _form.txtMessage.text = "Uploading file. Please wait.";
 		}		
 		
@@ -126,18 +152,15 @@ package components
 			_form.txtMessage.text = "You have cancelled.";
 			dispatchEvent( new Event( Event.CANCEL ) );
 		}
-
-		private function handleFileUploaded(e:Event):void
-		{
+		
+		private function handleRemoteResultEvent(event:RemoteResultEvent):void {
 			reset();
 			// Show message from the server
 			_form.txtMessage.text = "The file was uploaded.";
-			//selectedFilename = _fileVO.filename;
+			selectedFilename = _fileVO.filename;
 			dispatchEvent( new Event( Event.COMPLETE ) );
 		}
-		
-		private function handleError(e:ErrorEvent):void 
-		{
+		private function handleRemoteExceptionEvent(event:RemoteExceptionEvent):void {
 			reset();
 			_form.txtMessage.text = "ERROR: Cannot upload file.";
 		}
