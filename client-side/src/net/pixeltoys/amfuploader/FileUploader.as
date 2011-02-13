@@ -65,6 +65,7 @@ package net.pixeltoys.amfuploader
 		public function reset():void
 		{
 			_fileReference = new FileReference();
+			_fileVO = new FileVO();
 		}
 		
 		private function init():void 
@@ -73,7 +74,7 @@ package net.pixeltoys.amfuploader
 			_service = new RemoteFileService( _amfChannelId, _amfGateway );
 			_service.addEventListener(RemoteExceptionEvent.REMOTE_EXCEPTION, handleRemoteExceptionEvent);
 			_service.addEventListener(RemoteResultEvent.UPLOAD_STATUS, handleRemoteResultEvent);
-			
+			reset();
 		}
 		
 		private function createFileVO():void 

@@ -1,13 +1,14 @@
 package components  
 {
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.Loader;
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
-	import flash.net.FileReference;
 	import mx.containers.Panel;
 	import mx.events.FlexEvent;
 	import net.pixeltoys.amfuploader.FileUploader;
-	import net.pixeltoys.amfuploader.remoting.events.RemoteExceptionEvent;
+	import net.pixeltoys.display.LocalFilePreview;
 	import utils.PanelDragger;
 	
 	/**
@@ -48,7 +49,8 @@ package components
 	
 		private function init():void
 		{
-			var pd:PanelDragger = new PanelDragger( this, this.titleBar );			
+			var pd:PanelDragger = new PanelDragger();
+			pd.hook( this, this.titleBar );			
 			
 			_form.txtMessage.text = "Please click the Browse button.";
 			_form.btnBrowse.addEventListener( FlexEvent.BUTTON_DOWN, handleBrowseFileRequest );
@@ -59,6 +61,8 @@ package components
 			_fileUploader.addEventListener( Event.SELECT, handleFileSelect );
 			_fileUploader.addEventListener( Event.COMPLETE, handleFileUploaded );
 			_fileUploader.addEventListener( ErrorEvent.ERROR, handleError );
+			
+			generatePreview();
 		}				
 		
 		private function reset():void {
@@ -66,6 +70,7 @@ package components
 			//_form.txtFileSelected.text = "...";
 			_form.btnUpload.enabled = false;
 			_fileUploader.reset();
+			generatePreview();
 		}
 		
 		
@@ -83,31 +88,32 @@ package components
 		
 		private function generatePreview():void 
 		{
-			var extension:String = getExtension(_fileUploader.fileVO.filename);
-			var filetypes:Array = ["JPG", "jpg", "JPEG", "jpeg", "PNG", "png"];
-			if ( filetypes.indexOf(extension) >= 0)
+			var bmpd:BitmapData = new BitmapData(160, 90, false, 0x666666);
+			var preview_bmp:Bitmap = new Bitmap( bmpd );
+			if (_fileUploader.fileVO.filename)
 			{
-				_previewLoader = new Loader();
-				_previewLoader.contentLoaderInfo.addEventListener( Event.INIT, handlePreviewLoaded );
-				_previewLoader.loadBytes( _fileUploader.fileVO.filedata );
-				if (_form.previewContainer.numChildren > 0) _form.previewContainer.removeChild( _form.previewContainer.getChildAt(0) );
-				_form.previewContainer.addChild( _previewLoader );
+				var extension:String = getExtension(_fileUploader.fileVO.filename);
+				var pr:LocalFilePreview = new LocalFilePreview();
+				pr.preview( _fileUploader.fileVO.filedata, extension, bmpd );			
 			}
+			if (_form.previewContainer.numChildren > 0) _form.previewContainer.removeChild( _form.previewContainer.getChildAt(0) );
+			_form.previewContainer.addChild( preview_bmp );
+			preview_bmp.x = int( (preview_bmp.parent.width - bmpd.width) / 2);
 		}
 		
-		private function handlePreviewLoaded(e:Event):void 
-		{
-			_previewLoader.content.width = 160;
-			_previewLoader.content.height = 90;
-			_previewLoader.x = int( (_previewLoader.parent.width - _previewLoader.width) / 2);
-		}
-
 		// Called when upload file is clicked
 		private function uploadFile():void
 		{		   
 			_fileUploader.upload();
 		   _form.txtMessage.text = "Uploading file. Please wait.";
-		}		
+		}
+		
+		private function cancel():void 
+		{
+			reset();
+			_form.txtMessage.text = "You have cancelled.";			
+		}
+		
 		
 		////////////////
 		
@@ -123,7 +129,7 @@ package components
 		
 		private function handleCancel(e:FlexEvent):void 
 		{
-			_form.txtMessage.text = "You have cancelled.";
+			cancel();
 			dispatchEvent( new Event( Event.CANCEL ) );
 		}
 
