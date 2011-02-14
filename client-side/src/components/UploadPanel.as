@@ -59,15 +59,16 @@ package components
 			
 			_fileUploader = new FileUploader( amfChannelId, amfGateway, false );
 			_fileUploader.addEventListener( Event.SELECT, handleFileSelect );
+			_fileUploader.addEventListener( Event.CANCEL, handleFileSelectCancel );
 			_fileUploader.addEventListener( Event.COMPLETE, handleFileUploaded );
 			_fileUploader.addEventListener( ErrorEvent.ERROR, handleError );
 			
 			generatePreview();
-		}				
+		}						
 		
 		private function reset():void {
 			// Reset UI and filereference
-			//_form.txtFileSelected.text = "...";
+			_form.txtMessage.text = "Please click the Browse button.";
 			_form.btnUpload.enabled = false;
 			_form.btnBrowse.enabled = true;
 			_form.btnUpload.enabled = false;
@@ -75,11 +76,6 @@ package components
 			generatePreview();
 		}
 		
-		
-		// Called to add a file for upload 
-		private function browseFile():void { 
-			_fileUploader.browse();
-		} 
 		// Called when a file is selected 
 		private function handleFileSelect(e:Event):void 		
 		{ 
@@ -115,7 +111,7 @@ package components
 		private function cancel():void 
 		{
 			reset();
-			_form.txtMessage.text = "You have cancelled.";			
+			//_form.txtMessage.text = "You have cancelled.";			
 		}
 		
 		
@@ -128,7 +124,8 @@ package components
 		
 		private function handleBrowseFileRequest(e:FlexEvent):void 
 		{
-			browseFile();
+			_fileUploader.browse();
+			_form.txtMessage.text = "...";
 		}
 		
 		private function handleCancel(e:FlexEvent):void 
@@ -145,6 +142,11 @@ package components
 			//selectedFilename = _fileVO.filename;
 			dispatchEvent( new Event( Event.COMPLETE ) );
 		}
+		
+		private function handleFileSelectCancel(e:Event):void 
+		{
+			reset();
+		}		
 		
 		private function handleError(e:ErrorEvent):void 
 		{

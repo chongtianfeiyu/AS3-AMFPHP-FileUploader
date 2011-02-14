@@ -45,7 +45,8 @@ package net.pixeltoys.amfuploader
 		   _fileReference = new  FileReference(); 
 		   _fileReference.browse(); 
 		   _fileReference.addEventListener(Event.SELECT, handleFileSelect);
-		}
+		   _fileReference.addEventListener(Event.CANCEL, handleFileSelectCancel);
+		}		
 		
 		/**
 		 * Uploads the previously selected file using the specified filename.
@@ -94,9 +95,21 @@ package net.pixeltoys.amfuploader
 		// Called when a file is selected 
 		private function handleFileSelect(event:Event):void
 		{ 
+			_fileReference.removeEventListener( Event.SELECT, handleFileSelect );
+			_fileReference.removeEventListener( Event.CANCEL, handleFileSelectCancel);
+			//
 			_fileReference.addEventListener( Event.COMPLETE, handleFileLoadComplete );
 			_fileReference.load();
-		} 
+		}
+		
+		private function handleFileSelectCancel(e:Event):void 
+		{
+			_fileReference.removeEventListener( Event.SELECT, handleFileSelect );
+			_fileReference.removeEventListener( Event.CANCEL, handleFileSelectCancel);
+			//
+			dispatchEvent( new Event( Event.CANCEL ) );
+		}
+		
 		
 		// Called when the file contents are loaded int othe _fileReference object
 		private function handleFileLoadComplete(e:Event):void 
