@@ -69,6 +69,8 @@ package components
 			// Reset UI and filereference
 			//_form.txtFileSelected.text = "...";
 			_form.btnUpload.enabled = false;
+			_form.btnBrowse.enabled = true;
+			_form.btnUpload.enabled = false;
 			_fileUploader.reset();
 			generatePreview();
 		}
@@ -84,6 +86,7 @@ package components
 			_form.txtMessage.text = "Please click the Upload button.";
 			generatePreview();
 			_form.btnUpload.enabled = true;
+			_form.btnBrowse.enabled = false;
 		} 		
 		
 		private function generatePreview():void 
@@ -105,6 +108,7 @@ package components
 		private function uploadFile():void
 		{		   
 			_fileUploader.upload();
+			_form.btnUpload.enabled = false;
 		   _form.txtMessage.text = "Uploading file. Please wait.";
 		}
 		
@@ -144,7 +148,7 @@ package components
 		
 		private function handleError(e:ErrorEvent):void 
 		{
-			reset();
+			//reset();
 			_form.txtMessage.text = "ERROR: Cannot upload file.";
 		}
 		
