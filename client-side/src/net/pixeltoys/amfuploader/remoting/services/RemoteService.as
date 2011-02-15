@@ -1,15 +1,12 @@
 package net.pixeltoys.amfuploader.remoting.services
 {
 	import flash.events.EventDispatcher;
-	import mx.core.FlexGlobals;
-	import net.pixeltoys.amfuploader.remoting.events.RemoteExceptionEvent;
-	
-	import mx.core.Application;
-	import mx.messaging.ChannelSet;
 	import mx.messaging.channels.AMFChannel;
+	import mx.messaging.ChannelSet;
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.remoting.RemoteObject;
-	import mx.managers.CursorManager;
+	import net.pixeltoys.amfuploader.remoting.events.RemoteExceptionEvent;
+	
 
     /**
      * Super class for all remote services that contains some generic methods.

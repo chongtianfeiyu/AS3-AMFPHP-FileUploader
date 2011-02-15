@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<mx:Application 
+xmlns:mx="http://www.adobe.com/2006/mxml"
+xmlns:my="components.*"
+ paddingBottom="0" paddingTop="0" paddingLeft="0" paddingRight="0" 
+ layout="vertical"
+ 
+ creationComplete="init();"
+ >
+ <mx:Script>
+	 <![CDATA[
+	 import net.pixeltoys.amfuploader.FileUploader;
+	 
+	 private var fu:FileUploader;
+	 
+	 private function init():void 
+	 {
+		fu = new FileUploader("my-amfphp", "http://localhost/amfphp/gateway.php", true);
+		fu.savedFilename = "sarasa.jpg";
+	 }
+	 
+	 private function doBrowse():void 
+	 {
+		fu.savedFilename = filenameInput.text;
+		fu.browse();
+	 }
+	 
+	 private function doUpload():void 
+	 {
+		fu.upload();
+	 }
+	 
+	 ]]>
+ </mx:Script>
+	<mx:Label text="Upload file with the name:"></mx:Label>
+	<mx:TextInput id="filenameInput" text="testing.jpg"></mx:TextInput>
+	<mx:Button id="browse" label="Browse" click="doBrowse();"></mx:Button>
+	<!--mx:Button id="upload" label="Upload" click="doUpload();"></mx:Button-->
+</mx:Application>

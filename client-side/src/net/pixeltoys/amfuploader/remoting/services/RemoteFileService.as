@@ -1,12 +1,9 @@
 package net.pixeltoys.amfuploader.remoting.services
 {
-	import flash.utils.ByteArray;
-	import mx.core.FlexGlobals;
+	import mx.rpc.events.ResultEvent;
 	import net.pixeltoys.amfuploader.remoting.events.RemoteResultEvent;
 	import net.pixeltoys.amfuploader.remoting.vo.FileVO;
 	
-	import mx.core.Application;
-	import mx.rpc.events.ResultEvent;
 	
 	
 	/**

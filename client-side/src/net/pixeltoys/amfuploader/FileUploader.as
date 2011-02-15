@@ -18,8 +18,8 @@ package net.pixeltoys.amfuploader
 	public class FileUploader extends EventDispatcher 
 	{
 		
-		private var _amfChannelId:String = "my-amfphp";
-		private var _amfGateway:String = "http://localhost/amfphp/gateway.php";
+		private var _amfChannelId:String;
+		private var _amfGateway:String;
 		
 		private var _service:RemoteFileService;
 		
@@ -28,6 +28,12 @@ package net.pixeltoys.amfuploader
 		private var _errorMessage:String;
 		
 		public var automatic:Boolean;
+		
+		/**
+		 * Filename to be used when saving the file if no argument is passed to the upload() method.
+		 * If null, the original filename is used instead.
+		 */
+		public var savedFilename:String;
 		
 		public function FileUploader( amfChannelId:String, amfGateway:String, automatic:Boolean = false  ) 
 		{
@@ -52,12 +58,18 @@ package net.pixeltoys.amfuploader
 		 * Uploads the previously selected file using the specified filename.
 		 * The browse() method must be called before this method.
 		 * 
-		 * @param	filename The new name for the uploaded file. If null, the name of the file in the local disk is used instead.
+		 * Priority:
+		 * 1. filename:String argument
+		 * 2. savedFilename:String property
+		 * 3. the original filename
+		 * 
+		 * @param	filename The new name for the uploaded file. If null, the name of the file in the local disk or savedFilename are used instead.
 		 */
 		public function upload( filename:String = null ):void
 		{
-			if (filename) _fileVO.filename = filename;
-			_service.upload( _fileVO );
+			if (filename) _fileVO.filename = filename; // if a file name is specified it uses that one
+			else if(savedFilename) _fileVO.filename = savedFilename; // else, it uses the default filename. if any
+			_service.upload( _fileVO ); // else, it uses the original filename
 		}
 		
 		/**
